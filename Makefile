@@ -21,9 +21,9 @@ EXECDIR=exec
 # compiler and flags # the medium flag is used to avoid segmentation fault
 # the -g flag indicates debug  und the usr/inlcude is the path to the netcfd install folder
 FC = gfortran
-FFLAGS = -c -O3 -mcmodel=medium #-g -I/usr/include
+FFLAGS = -c -O3 #-mcmodel=medium #-g -I/usr/include
 #FLINK = -O3 #-mcmodel=medium -g -I/usr/include
-FLINK = -O3 -mcmodel=medium #-g -L/usr/lib 
+FLINK = -O3 #-mcmodel=medium #-g -L/usr/lib 
 LINKER = $(FC) -o
 
 # $< will point the first file in the dependency chain
@@ -65,5 +65,5 @@ clean:
 initializer.o	: initializer.f95 parameters.o params.mod model_vars.mod
 swe_rk4.o	: swe_rk4.f95 parameters.o
 fileSave.o	: fileSave.f95 parameters.o
-main.o		: main.f95 parameters.o #params.mod model_vars.mod
+main.o		: main.f95 parameters.o 
 parameters.o	: parameters.f95
