@@ -20,13 +20,8 @@
                         print *,"calculations done for timeStep t=",i-1,"of",nt
                                                 
                 end do
-                print *,"All calculations done! Saving data"
-	        call matlab_saver
-                print *, "ALl data saved...exiting"
-	
-		write(*,*)'The y value is'
-		write(*,90) (y(i),i=1,ny) 
-		90 format (*(F8.3,1X))
+		write(*,*)'All calculations done... No saver routine detected'
+		write(*,*)'Exiting without saving the data...'
 
         end program main
 
