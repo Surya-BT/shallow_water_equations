@@ -34,9 +34,9 @@ subroutine rk4(ts)
 
 ! final step
 
-	uout = uo + dt6*(ku1+2*ku2+2*ku3+ku4)
-	vout = vo + dt6*(kv1+2*kv2+2*kv3+kv4)
-	hout = ho + dt6*(kh1+2*kh2+2*kh3+kh4)
+	uout = uo + dt6*(ku1+2.0*ku2+2.0*ku3+ku4)
+	vout = vo + dt6*(kv1+2.0*kv2+2.0*kv3+kv4)
+	hout = ho + dt6*(kh1+2.0*kh2+2.0*kh3+kh4)
 	
 	u(:,:,ts+1) = uout
 	v(:,:,ts+1) = vout
@@ -57,7 +57,7 @@ subroutine solve(uout,vout,hout,uin,vin,hin)
 	integer :: i2,j2
 	integer :: xb,xc,xf,yb,yc,yf
 
-	real*8,parameter :: nuxx=nu/(dx**2),nuyy=nu/(dy**2),gdx=g/(2.0*dx),gdy=g/(2.0*dy),dx2=1.0/(2.0*dx),dy2=1.0/(2.0*dy)
+	real*8,parameter :: nuxx=nu/(dx**2.0),nuyy=nu/(dy**2.0),gdx=g/(2.0*dx),gdy=g/(2.0*dy),dx2=1.0/(2.0*dx),dy2=1.0/(2.0*dy)
 ! 	nuxx = nu/(dx**2.0) ! here I am using teh exponential power instead of multiplying twice
 !	nuyy = nu/(dy**2.0)
 !	gdx = g/(2.0*dx)
@@ -78,31 +78,33 @@ subroutine solve(uout,vout,hout,uin,vin,hin)
 			call indices (xf,xc,xb,i2,nx)
 
 			hx=(hin(xf,yc)*uin(xf,yc)-hin(xb,yc)*uin(xb,yc))*dx2
-			hy=(hin(xc,yf)*uin(xc,yf)-hin(xc,yb)*uin(xc,yb))*dy2
+			hy=(hin(xc,yf)*vin(xc,yf)-hin(xc,yb)*vin(xc,yb))*dy2
 
+! x momentum equation
 			ux=uin(xc,yc)*(uin(xf,yc)-uin(xb,yc))*dx2	
 			uy=vin(xc,yc)*(uin(xc,yf)-uin(xc,yb))*dy2
-			
-			vx=uin(xc,yc)*(vin(xf,yc)-vin(xb,yc))*dx2
-			vy=vin(xc,yc)*(uin(xc,yf)-uin(xc,yb))*dy2
-
 			fv = F(xc,yc)*vin(xc,yc)
-			fu = F(xc,yc)*uin(xc,yc)
-	
 			gx = gdx*(hin(xf,yc)-hin(xb,yc))
-			gy = gdy*(hin(xc,yf)-hin(xc,yb))
-
 			bu = vd*uin(xc,yc)
-			bv = vd*vin(xc,yc)
-
 			uxx = nuxx*(uin(xf,yc)-2.0*uin(xc,yc)+uin(xb,yc))
 			uyy = nuyy*(uin(xc,yf)-2.0*uin(xc,yc)+uin(xc,yb))
-			
+
+! y momentum equation	
+			vx=uin(xc,yc)*(vin(xf,yc)-vin(xb,yc))*dx2
+			vy=vin(xc,yc)*(vin(xc,yf)-vin(xc,yb))*dy2
+			fu = F(xc,yc)*uin(xc,yc)
+			gy = gdy*(hin(xc,yf)-hin(xc,yb))
+			bv = vd*vin(xc,yc)
 			vxx = nuxx*(vin(xf,yc)-2.0*vin(xc,yc)+vin(xb,yc))
 			vyy = nuyy*(vin(xc,yf)-2.0*vin(xc,yc)+vin(xc,yb))
-			
+
+! continuity equation			
 			hout(xc,yc) = -(hx+hy)	
+
+! Assemblem momentum equation
 			uout(xc,yc) = -(ux+uy)+fv-gx-bu+uxx+uyy
+
+!Assembled y momentum equation
 			vout(xc,yc) = -(vx+vy)+fu-gy-bv+vxx+vyy
 
 

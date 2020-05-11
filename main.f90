@@ -15,9 +15,9 @@
                 call init
                 print *, "Data initialised and starting calculation"
 
-                do i=2,nt
-                        call rk4(i-1)
-                        print *,"calculations done for timeStep t=",i-1,"of",nt
+                do i=1,nt ! i=2,nt
+                        call rk4(i) ! rk4(i-1)
+                        print *,"calculations done for timeStep t=",i,"of",nt
                                                 
                 end do
                 print *,"All calculations done! Saving data"
